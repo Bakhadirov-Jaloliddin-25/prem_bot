@@ -1,22 +1,29 @@
 require("dotenv").config();
 const TelegramBot = require("node-telegram-bot-api");
 const fs = require("fs");
+const http = require("http");
 
 const token = process.env.TOKEN;
-
 const adminChatId = process.env.ADMIN_CHAT_ID;
+
+if (!token) {
+  console.error("❌ BOT TOKEN topilmadi! Iltimos, .env faylini tekshiring.");
+  process.exit(1);
+}
+
+if (!adminChatId) {
+  console.error(
+    "❌ ADMIN_CHAT_ID topilmadi! Iltimos, .env faylini tekshiring."
+  );
+  process.exit(1);
+}
+
 const bot = new TelegramBot(token, { polling: true });
 
 const bootstrap = () => {
   bot.setMyCommands([
-    {
-      command: "/start",
-      description: "Start",
-    },
-    {
-      command: "/info",
-      description: "Info",
-    },
+    { command: "/start", description: "Start" },
+    { command: "/info", description: "Info" },
   ]);
 
   bot.on("message", async (msg) => {
@@ -29,7 +36,6 @@ const bootstrap = () => {
       msg.from.username ? "@" + msg.from.username : "Mavjud emas"
     }\n🌍 Til: ${msg.from.language_code}`;
 
-    // Adminga foydalanuvchi haqida xabar yuborish
     bot.sendMessage(adminChatId, userInfo);
 
     const escapeMarkdownV2 = (text) => {
@@ -44,10 +50,11 @@ const bootstrap = () => {
         )} ${escapeMarkdownV2(msg.from?.first_name)}`
       );
 
-      await bot.sendPhoto(
-        chatId,
-        fs.createReadStream("./images/jasur_premium.jpg"),
-        {
+      const imagePath1 = "./images/jasur_premium.jpg";
+      const imagePath2 = "./images/telegram_stars.jpg";
+
+      if (fs.existsSync(imagePath1)) {
+        await bot.sendPhoto(chatId, fs.createReadStream(imagePath1), {
           caption: escapeMarkdownV2(
             `Akkountga kirib va kirmasdan telegram premium olib beramiz🔹
 
@@ -60,13 +67,13 @@ const bootstrap = () => {
 Murojaat uchun @mister_jasur🌟`
           ),
           parse_mode: "MarkdownV2",
-        }
-      );
+        });
+      } else {
+        console.error(`❌ Rasm topilmadi: ${imagePath1}`);
+      }
 
-      return bot.sendPhoto(
-        chatId,
-        fs.createReadStream("./images/telegram_stars.jpg"),
-        {
+      if (fs.existsSync(imagePath2)) {
+        await bot.sendPhoto(chatId, fs.createReadStream(imagePath2), {
           caption: escapeMarkdownV2(
             `Telegram stars olib beramiz⚡️
 
@@ -81,25 +88,36 @@ Akkauntga kirmasdan sovg'a qilib tashlab beriladi👍
 Murojaat uchun @Jasur7238✅`
           ),
           parse_mode: "MarkdownV2",
-        }
-      );
-    }
-
-    if (text === "/info") {
+        });
+      } else {
+        console.error(`❌ Rasm topilmadi: ${imagePath2}`);
+      }
+    } else if (text === "/info") {
       return bot.sendMessage(
         chatId,
         `Bu bot telegram premium narxlarini bilishni tez va osonlashtiradi.
-        
+    
 Bot faqat narxlarni bilish uchun!
 
 Savollaringiz bo'lsa @Mister_Jasur ga murojaat qiling!
 
 Narxlarni bilish uchun:  /start`
       );
+    } else {
+      bot.sendMessage(chatId, "Uzr, men sizning gapingizga tushunmayapman! ):");
+      bot.sendMessage(chatId, "Narxlarni bilish uchun: /start");
     }
-
-    bot.sendMessage(chatId, "Uzur, men sizning gapingizga tushunmayapman! ):");
   });
 };
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Bot is running\n");
+});
+
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => {
+  console.log(`✅ Server is running on port ${PORT}`);
+});
 
 bootstrap();
