@@ -7,15 +7,10 @@ const token = process.env.TOKEN;
 const adminChatId = process.env.ADMIN_CHAT_ID;
 
 if (!token) {
-  console.error("❌ BOT TOKEN topilmadi! Iltimos, .env faylini tekshiring.");
-  process.exit(1);
+  console.error("❌ BOT TOKEN topilmadi! .env faylini tekshiring.");
 }
-
 if (!adminChatId) {
-  console.error(
-    "❌ ADMIN_CHAT_ID topilmadi! Iltimos, .env faylini tekshiring."
-  );
-  process.exit(1);
+  console.error("❌ ADMIN_CHAT_ID topilmadi! .env faylini tekshiring.");
 }
 
 const bot = new TelegramBot(token, { polling: true });
@@ -115,10 +110,15 @@ const server = http.createServer((req, res) => {
   res.end("Bot is running\n");
 });
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8080;
 
 server.listen(PORT, () => {
   console.log(`✅ Server is running on port ${PORT}`);
 });
+
+setInterval(() => {
+  http.get("https://beneficial-rona-bakhadirov-6418c58a.koyeb.app/");
+  console.log("🔄 Botga ping yuborildi.");
+}, 5 * 60 * 1000);
 
 bootstrap();
