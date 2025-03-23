@@ -97,7 +97,8 @@ Narxlarni bilish uchun:  /start`
       );
     }
 
-    bot.sendMessage(chatId, "Uzur, men sizning gapingizga tushunmayapman! ):");
+    bot.sendMessage(chatId, "Uzr, men sizning gapingizga tushunmayapman! ):");
+    bot.sendMessage(chatId, "Narxlarni bilish uchun: /start");
   });
 };
 
