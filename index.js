@@ -1,8 +1,9 @@
+require("dotenv").config();
 const TelegramBot = require("node-telegram-bot-api");
 const fs = require("fs");
 
-const token = "7808415128:AAE_u-ooij8JHK8UOOU2T83LVAKtlRrCQ6M";
-const adminChatId = 988731697; // Sizning Telegram ID
+const token = process.env.TOKEN;
+const adminChatId = process.env.ADMIN_CHAT_ID;
 
 const bot = new TelegramBot(token, { polling: true });
 
@@ -69,7 +70,7 @@ Murojaat uchun @mister_jasur🌟`
           caption: escapeMarkdownV2(
             `Telegram stars olib beramiz⚡️
 
-Akkountga kirmasdan sovg'a qilib tashlab beriladi👍
+Akkauntga kirmasdan sovg'a qilib tashlab beriladi👍
 
 ⭐️50 tasi - 15 ming⭐
 ⭐️100 tasi - 30 ming⭐
@@ -97,8 +98,7 @@ Narxlarni bilish uchun:  /start`
       );
     }
 
-    bot.sendMessage(chatId, "Uzr, men sizning gapingizga tushunmayapman! ):");
-    bot.sendMessage(chatId, "Narxlarni bilish uchun: /start");
+    bot.sendMessage(chatId, "Uzur, men sizning gapingizga tushunmayapman! ):");
   });
 };
 
